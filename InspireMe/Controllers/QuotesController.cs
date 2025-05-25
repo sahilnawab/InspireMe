@@ -7,9 +7,12 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using InspireMe.Data;
 using InspireMe.Models;
+using Microsoft.AspNetCore.Authorization;
+using System.Security.Claims;
 
 namespace InspireMe.Controllers
 {
+    [Authorize]
     public class QuotesController : Controller
     {
         private readonly AppDbContext _context;
@@ -22,7 +25,14 @@ namespace InspireMe.Controllers
         // GET: Quotes
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Quotes.ToListAsync());
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            return View(await _context.Quotes.Where(s=>s.UserId==userId) .ToListAsync());
+        }
+
+        [HttpGet]
+        [Authorize(Roles ="Admin")]
+        public async Task<IActionResult> AdminList() {
+            return View(await _context.Quotes.Include(s => s.User).ToListAsync());
         }
 
         // GET: Quotes/Details/5
@@ -54,15 +64,29 @@ namespace InspireMe.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("id,author,content")] Quote quote)
+        public async Task<IActionResult> Create([Bind("id,author,content")] QuoteModel quoteModel)
         {
             if (ModelState.IsValid)
             {
+                // Get the logged-in user's ID
+                var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+                if (userId == null)
+                {
+                    return Unauthorized(); // Ensure the user is logged in
+                }
+                var quote = new Quote();
+                // Assign the user's ID to the quote before saving
+                quote.UserId = userId;
+                quote.author = quoteModel.author;
+                quote.content=quoteModel.content;
+
+
                 _context.Add(quote);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            return View(quote);
+            return View(quoteModel);
         }
 
         // GET: Quotes/Edit/5

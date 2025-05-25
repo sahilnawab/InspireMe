@@ -1,0 +1,40 @@
+﻿@using Microsoft.AspNetCore.Identity
+@using InspireMe.Models
+
+@inject SignInManager<AppUser> SignInManager
+@inject UserManager<AppUser> UserManager
+
+<ul class="navbar-nav">
+@if (SignInManager.IsSignedIn(User))
+{
+   
+    <li class="nav-item">
+            <form asp-controller="Auth" asp-action="Logout" method="post" id="logoutForm">
+                @Html.AntiForgeryToken()
+                <span>Hello, @User.Identity.Name!</span>
+                <button type="submit" class="btn btn-link">Logout</button>
+            </form>
+    </li>
+        <li class="nav-item">
+            <a class="nav-link text-dark" id="Quotes" asp-controller="Quotes">Quotes</a>
+        </li>
+
+        @if (User.IsInRole("Admin"))
+        {
+             <li class="nav-item">
+                <a class="nav-link text-dark" asp-controller="Quotes" asp-action="AdminList">Admin Panel</a>
+            </li>
+        }
+
+}
+else
+{
+    <li class="nav-item">
+            <a class="nav-link text-dark" id="register"  asp-controller="Auth" asp-action="Login">Login</a>
+    </li>
+        <li class="nav-item">
+            
+            <a class="nav-link text-dark" id="login" asp-controller="Auth" asp-action="Register">Register</a>
+    </li>
+}
+</ul>
