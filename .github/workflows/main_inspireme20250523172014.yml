@@ -33,7 +33,7 @@ jobs:
         run: echo "$HOME/.dotnet/tools" >> $GITHUB_PATH
 
       - name: Run EF Core Migrations on Azure DB
-        run: dotnet ef database update --project InspireMe.csproj
+        run: dotnet ef database update --project InspireMe/InspireMe.csproj
         env:
           ConnectionStrings__DefaultConnection: ${{ secrets.PROD_CONNECTION_STRING }}
 
