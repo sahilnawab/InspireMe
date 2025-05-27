@@ -26,10 +26,17 @@ jobs:
       - name: Build with dotnet
         run: dotnet build --configuration Release
 
-      - name: Apply EF Core Migrations to Production DB
+      - name: Install EF Core CLI
+        run: dotnet tool install --global dotnet-ef
+
+      - name: Add EF tool to PATH
+        run: echo "$HOME/.dotnet/tools" >> $GITHUB_PATH
+
+      - name: Run EF Core Migrations on Azure DB
         run: dotnet ef database update --project InspireMe.csproj
         env:
           ConnectionStrings__DefaultConnection: ${{ secrets.PROD_CONNECTION_STRING }}
+
 
       - name: dotnet publish
         run: dotnet publish -c Release -o "${{env.DOTNET_ROOT}}/myapp"
