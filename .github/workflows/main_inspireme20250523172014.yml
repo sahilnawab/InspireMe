@@ -27,7 +27,7 @@ jobs:
         run: dotnet build --configuration Release
 
       - name: Apply EF Core Migrations to Production DB
-        run: dotnet ef database update --project YourProject.csproj
+        run: dotnet ef database update --project InspireMe.csproj
         env:
           ConnectionStrings__DefaultConnection: ${{ secrets.PROD_CONNECTION_STRING }}
 
