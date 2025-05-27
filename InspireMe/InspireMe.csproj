@@ -24,6 +24,7 @@
 
 	<ItemGroup>
 	  <Folder Include="Areas\" />
+	  <Folder Include="Migrations\" />
 	</ItemGroup>
 
 	<ProjectExtensions><VisualStudio><UserProperties /></VisualStudio></ProjectExtensions>
