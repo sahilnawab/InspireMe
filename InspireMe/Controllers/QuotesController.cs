@@ -9,6 +9,7 @@ using InspireMe.Data;
 using InspireMe.Models;
 using Microsoft.AspNetCore.Authorization;
 using System.Security.Claims;
+using Azure.Storage.Blobs;
 
 namespace InspireMe.Controllers
 {
@@ -16,10 +17,14 @@ namespace InspireMe.Controllers
     public class QuotesController : Controller
     {
         private readonly AppDbContext _context;
+        private readonly IWebHostEnvironment _env;
+        private readonly IConfiguration _config;
 
-        public QuotesController(AppDbContext context)
+        public QuotesController(AppDbContext context, IWebHostEnvironment env, IConfiguration config)
         {
             _context = context;
+            _env = env;
+            _config = config;
         }
 
         // GET: Quotes
@@ -64,7 +69,7 @@ namespace InspireMe.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("id,author,content")] QuoteModel quoteModel)
+        public async Task<IActionResult> Create( QuoteModel quoteModel)
         {
             if (ModelState.IsValid)
             {
@@ -75,8 +80,10 @@ namespace InspireMe.Controllers
                 {
                     return Unauthorized(); // Ensure the user is logged in
                 }
+                var imageUrl = await SaveImageAsync(quoteModel.Image);
+
                 var quote = new Quote();
-                // Assign the user's ID to the quote before saving
+                quote.ImageUrl = imageUrl;
                 quote.UserId = userId;
                 quote.author = quoteModel.author;
                 quote.content=quoteModel.content;
@@ -88,6 +95,9 @@ namespace InspireMe.Controllers
             }
             return View(quoteModel);
         }
+       
+
+
 
         // GET: Quotes/Edit/5
         public async Task<IActionResult> Edit(int? id)
@@ -98,11 +108,17 @@ namespace InspireMe.Controllers
             }
 
             var quote = await _context.Quotes.FindAsync(id);
+            var quoteModel = new QuoteModel();
+            quoteModel.author = quote.author;
+            quoteModel.content = quote.content;
+            quoteModel.ImagePath = quote.ImageUrl;
+
+
             if (quote == null)
             {
                 return NotFound();
             }
-            return View(quote);
+            return View(quoteModel);
         }
 
         // POST: Quotes/Edit/5
@@ -110,32 +126,36 @@ namespace InspireMe.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("id,author,content")] Quote quote)
+        public async Task<IActionResult> Edit(int id, QuoteModel quote)
         {
-            if (id != quote.id)
-            {
-                return NotFound();
-            }
+
 
             if (ModelState.IsValid)
             {
-                try
+
+                var imageUrl = await SaveImageAsync(quote.Image);
+
+                var ExistingQuote = _context.Quotes.FirstOrDefault(s => s.id == id);
+                if (ExistingQuote != null)
                 {
-                    _context.Update(quote);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!QuoteExists(quote.id))
+                    ExistingQuote.author = quote.author;
+                    ExistingQuote.content = quote.content;
+                    ExistingQuote.ImageUrl = imageUrl;
+
+
+
+
+                    try
                     {
-                        return NotFound();
+                        _context.Update(ExistingQuote);
+                        await _context.SaveChangesAsync();
                     }
-                    else
+                    catch (Exception e)
                     {
-                        throw;
+                        Console.WriteLine(e.Message);
                     }
+                    return RedirectToAction(nameof(Index));
                 }
-                return RedirectToAction(nameof(Index));
             }
             return View(quote);
         }
@@ -173,6 +193,40 @@ namespace InspireMe.Controllers
             return RedirectToAction(nameof(Index));
         }
 
+        private async Task<string?> SaveImageAsync(IFormFile image)
+        {
+            if (image == null || image.Length == 0)
+                return null;
+
+            var fileName = Guid.NewGuid() + Path.GetExtension(image.FileName);
+
+            // In development: Save locally
+            if (_env.IsDevelopment())
+            {
+                var path = Path.Combine(_env.WebRootPath, "uploads", fileName);
+                using (var stream = new FileStream(path, FileMode.Create))
+                {
+                    await image.CopyToAsync(stream);
+                }
+
+                return "/uploads/" + fileName; // Return relative URL
+            }
+
+            // In production: Upload to Azure Blob
+            var connectionString = _config["AzureBlob:ConnectionString"];
+            var containerName = _config["AzureBlob:Container"];
+
+            var blobClient = new BlobContainerClient(connectionString, containerName);
+            await blobClient.CreateIfNotExistsAsync();
+            var blob = blobClient.GetBlobClient(fileName);
+
+            using (var stream = image.OpenReadStream())
+            {
+                await blob.UploadAsync(stream, overwrite: true);
+            }
+
+            return blob.Uri.ToString(); // Full URL to image
+        }
         private bool QuoteExists(int id)
         {
             return _context.Quotes.Any(e => e.id == id);

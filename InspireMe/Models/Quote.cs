@@ -12,6 +12,7 @@ namespace InspireMe.Models
         public string author { get; set; }
         public string content { get; set; }
 
+        public string? ImageUrl { get; set; } 
 
         public string UserId { get; set; }
         [ForeignKey(nameof(UserId))]

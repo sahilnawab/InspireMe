@@ -10,10 +10,12 @@ builder.Services.AddDbContext<AppDbContext>(options =>
         builder.Configuration.GetConnectionString("DefaultConnection"),
         sqlServerOptions => sqlServerOptions.EnableRetryOnFailure(
             maxRetryCount: 5,
-            maxRetryDelay: TimeSpan.FromSeconds(100),
+            maxRetryDelay: TimeSpan.FromSeconds(10),
             errorNumbersToAdd: null)
     )
 );
+var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+Console.WriteLine($"Connection String: {connectionString}");
 
 
 builder.Services.AddIdentity<AppUser,IdentityRole>(options =>

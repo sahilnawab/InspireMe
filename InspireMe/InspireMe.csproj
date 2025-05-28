@@ -7,6 +7,7 @@
 	</PropertyGroup>
 
 	<ItemGroup>
+		<PackageReference Include="Azure.Storage.Blobs" Version="12.24.0" />
 		<PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="8.0.11" />
 		<PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="8.0.16" />
 		<PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="9.0.5">
@@ -25,6 +26,7 @@
 	<ItemGroup>
 	  <Folder Include="Areas\" />
 	  <Folder Include="Migrations\" />
+	  <Folder Include="wwwroot\uploads\" />
 	</ItemGroup>
 
 	<ProjectExtensions><VisualStudio><UserProperties /></VisualStudio></ProjectExtensions>

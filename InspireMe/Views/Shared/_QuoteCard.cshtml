@@ -1,0 +1,19 @@
+﻿<div class="card my-2 border rounded-3 shadow h-100">
+    @if (!string.IsNullOrEmpty(Model.ImageUrl))
+    {
+        <img src="@Model.ImageUrl" class="card-img-top" style="max-height: 250px; object-fit: cover;" />
+    }
+
+    <div class="card-body">
+        <h5 class="card-title">@Model.author</h5>
+        <p class="card-text">@Model.content</p>
+        <small class="text-muted">Added by: @Model.User?.Email</small>
+
+        <!-- Actions inside the card -->
+        <div class="mt-2">
+            <a asp-action="Edit" asp-route-id="@Model.id" class="btn btn-sm btn-primary">Edit</a>
+            <a asp-action="Details" asp-route-id="@Model.id" class="btn btn-sm btn-info">Details</a>
+            <a asp-action="Delete" asp-route-id="@Model.id" class="btn btn-sm btn-danger">Delete</a>
+        </div>
+    </div>
+</div>
