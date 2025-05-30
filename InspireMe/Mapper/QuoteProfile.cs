@@ -8,7 +8,9 @@ namespace InspireMe.Mapper
         public QuoteProfile()
         {
             CreateMap<Quote, QuoteModel>()
+                .ForMember(dest=>dest.CreatedByName,opt=>opt.MapFrom(src=>src.User.Name))
                 .ForMember(dest => dest.ImagePath, opt => opt.MapFrom(src => src.ImageUrl)).ReverseMap();
+
 
         }
     }

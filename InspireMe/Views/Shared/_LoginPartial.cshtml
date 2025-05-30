@@ -4,28 +4,19 @@
 @inject SignInManager<AppUser> SignInManager
 @inject UserManager<AppUser> UserManager
 
-<ul class="navbar-nav">
+<ul class="navbar-nav gap-3">
 @if (SignInManager.IsSignedIn(User))
 {
    
-    <li class="nav-item">
+   
+      
+        <li class="nav-item ">
             <form asp-controller="Auth" asp-action="Logout" method="post" id="logoutForm">
                 @Html.AntiForgeryToken()
                 <span>Hello, @User.Identity.Name!</span>
-                <button type="submit" class="btn btn-link">Logout</button>
+                <button type="submit" class="btn btn-danger">Logout</button>
             </form>
-    </li>
-        <li class="nav-item">
-            <a class="nav-link text-dark" id="Quotes" asp-controller="Quotes" asp-action="Index">Quotes</a>
         </li>
-
-        @if (User.IsInRole("Admin"))
-        {
-             <li class="nav-item">
-                <a class="nav-link text-dark" asp-controller="Quotes" asp-action="AdminList">Admin Panel</a>
-            </li>
-        }
-
 }
 else
 {

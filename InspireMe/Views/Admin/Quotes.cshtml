@@ -1,13 +1,13 @@
-﻿@model List<Quote>
+﻿@model List<QuoteModel>
 
 @{
-    ViewData["Title"] = "Admin - All Quotes";
+    ViewData["Title"] = " All Quotes";
 }
 
-<h2>All Quotes (Admin View)</h2>
+<h2>All Quotes </h2>
 
-<table class="table table-striped">
-    <thead>
+<table class="table table-striped table-bordered table-hover">
+    <thead class="thead-dark">
         <tr>
             <th>Author</th>
             <th>Content</th>
@@ -21,7 +21,7 @@
             <tr>
                 <td>@quote.author</td>
                 <td>@quote.content</td>
-                <td>@quote.User?.Name</td>
+                <td>@quote?.CreatedByName</td>
                 <td>
                     <a asp-action="Edit" asp-route-id="@quote.id" class="btn btn-sm btn-primary">Edit</a>
                     <a asp-action="Delete" asp-route-id="@quote.id" class="btn btn-sm btn-danger">Delete</a>

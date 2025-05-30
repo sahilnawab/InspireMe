@@ -1,0 +1,29 @@
+﻿@{
+    ViewData["Title"] = "Admin Dashboard";
+}
+
+<div class="container py-4">
+    <h2 class="fw-bold text-primary">⚙️ Admin Dashboard</h2>
+
+    <div class="row mt-4">
+        <div class="col-md-6">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title"><i class="bi bi-people-fill text-info"></i> User Management</h5>
+                    <p class="card-text">View and change roles of users.</p>
+                    <a asp-controller="Admin" asp-action="Users" class="btn btn-outline-primary">Manage Users</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title"><i class="bi bi-quote text-secondary"></i> Quote Management</h5>
+                    <p class="card-text">View, search, and export quotes.</p>
+                    <a asp-controller="Admin" asp-action="Quotes" class="btn btn-outline-secondary">Manage Quotes</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

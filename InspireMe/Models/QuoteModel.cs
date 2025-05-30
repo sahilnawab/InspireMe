@@ -15,6 +15,8 @@ namespace InspireMe.Models
 
         [Required(ErrorMessage ="Imgae is Reqeuired")]
         public IFormFile? Image { get; set; }
+
+        public string? CreatedByName { get; set; }
         public string? ImagePath { get; set; }
     }
 }

@@ -1,9 +1,12 @@
+using InspireMe.Contracts;
 using InspireMe.Data;
 using InspireMe.Mapper;
 using InspireMe.Models;
+using InspireMe.Services;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -23,6 +26,7 @@ builder.Services.AddAuthentication(options =>
 {
     options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
     options.DefaultChallengeScheme = GoogleDefaults.AuthenticationScheme;
+
 })
 .AddCookie()
     .AddGoogle(options =>
@@ -39,6 +43,8 @@ builder.Services.AddIdentity<AppUser,IdentityRole>(options =>
     options.Password.RequireUppercase = true;
     options.Password.RequireNonAlphanumeric = true;
     options.Password.RequiredLength = 8;
+    options.SignIn.RequireConfirmedEmail = true;
+
 })
        .AddEntityFrameworkStores<AppDbContext>().AddDefaultTokenProviders();
 
@@ -47,6 +53,14 @@ builder.Services.ConfigureApplicationCookie(options =>
     options.LoginPath = "/Auth/Login"; // for unauthenticated users
     options.AccessDeniedPath = "/Auth/AccessDenied"; // for unauthorized access
 });
+
+builder.Services.AddScoped<IQuoteService, QuoteService>();
+builder.Services.AddScoped<IAdminService, AdminService>();
+
+builder.Services.AddTransient<IEmailSender, EmailSender>();
+builder.Services.AddScoped<IViewRenderService, ViewRenderService>();
+builder.Services.AddHttpContextAccessor();
+
 builder.Services.AddAutoMapper (typeof(QuoteProfile).Assembly);
 
 // Add services to the container.

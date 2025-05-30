@@ -1,8 +1,76 @@
 ﻿@{
-    ViewData["Title"] = "Home Page";
+    ViewData["Title"] = "Welcome to InspireMe";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core Wlcome</a>.</p>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet" />
+
+<div class="container py-5">
+    <div class="text-center mb-5">
+        <h1 class="display-4 fw-bold text-primary">🌟 Welcome to InspireMe</h1>
+        <p class="lead text-muted">A modern motivational quote management system built with ASP.NET Core MVC</p>
+    </div>
+
+    <div class="row justify-content-center">
+        <div class="col-md-10">
+            <div class="card shadow-sm border-0 mb-4">
+                <div class="card-body">
+                    <h3 class="mb-3"><i class="bi bi-stars text-warning"></i> Key Features</h3>
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item">
+                            <i class="bi bi-person-plus-fill text-primary"></i>
+                            User Registration with Email Confirmation
+                        </li>
+                        <li class="list-group-item">
+                            <i class="bi bi-shield-lock-fill text-danger"></i>
+                            Secure Login using ASP.NET Identity
+                        </li>
+                        <li class="list-group-item">
+                            <i class="bi bi-google text-danger"></i>
+                            Login with Google (OAuth 2.0)
+                        </li>
+                        <li class="list-group-item">
+                            <i class="bi bi-people-fill text-info"></i>
+                            Role-Based Access: Admin & User
+                        </li>
+                        <li class="list-group-item">
+                            <i class="bi bi-image text-success"></i>
+                            Quote Image Uploads to Azure Blob Storage
+                        </li>
+                        <li class="list-group-item">
+                            <i class="bi bi-cloud-arrow-up text-secondary"></i>
+                            Azure App Deployment with GitHub Actions CI/CD
+                        </li>
+                        <li class="list-group-item">
+                            <i class="bi bi-check-circle-fill text-success"></i>
+                            Email Confirmation via SendGrid
+                        </li>
+                        <li class="list-group-item">
+                            <i class="bi bi-boxes text-warning"></i>
+                            Reusable Razor Components & Clean Layout
+                        </li>
+                        <li class="list-group-item">
+                            <i class="bi bi-database-lock text-dark"></i>
+                            Environment-based AppSettings for Secure DB Handling
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="card shadow-sm border-0">
+                <div class="card-body">
+                    <h4 class="fw-bold"><i class="bi bi-code-slash text-success"></i> Tech Stack Used</h4>
+                    <p class="text-muted">
+                        ASP.NET Core MVC, Entity Framework Core, Azure App Services, Azure Blob Storage, GitHub Actions, SendGrid, Identity, Bootstrap 5.
+                    </p>
+                </div>
+            </div>
+
+            <div class="text-center mt-4">
+                <a href="~/Quotes" class="btn btn-primary btn-lg px-4">
+                    <i class="bi bi-quote text-white"></i> Start Exploring Quotes
+                </a>
+            </div>
+        </div>
+    </div>
 </div>
+

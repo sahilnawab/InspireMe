@@ -1,0 +1,21 @@
+﻿@model EmailConfirmModel
+
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html>
+<body style="font-family: Arial; padding: 20px;">
+    <h2>Welcome to InspireMe @Model.Name!</h2>
+    <p>Thank you for registering.</p>
+    <p>Please confirm your email address by clicking the link below:</p>
+    <p>
+        <a href="@Model.ConfirmationLink" style="color: white; background-color: #007bff; padding: 10px 20px; text-decoration: none; border-radius: 5px;">
+            Confirm Email
+        </a>
+    </p>
+    <p>If the button doesn’t work, copy and paste this link into your browser:</p>
+    <p><small>@Model.ConfirmationLink</small></p>
+</body>
+</html>
