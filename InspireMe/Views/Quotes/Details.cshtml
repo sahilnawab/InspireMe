@@ -1,4 +1,4 @@
-﻿@model InspireMe.Models.Quote
+﻿@model InspireMe.Models.QuoteModel
 
 @{
     ViewData["Title"] = "Details";
@@ -9,6 +9,10 @@
 <div>
     <h4>Quote</h4>
     <hr />
+    @if (!string.IsNullOrEmpty(Model.ImagePath))
+    {
+        <img src="@Model.ImagePath" class="card-img-top" style="max-height: 250px; object-fit: cover;" />
+    }
     <dl class="row">
         <dt class = "col-sm-2">
             @Html.DisplayNameFor(model => model.author)
@@ -17,7 +21,7 @@
             @Html.DisplayFor(model => model.author)
         </dd>
         <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.content)
+            @Html.DisplayNameFor(model => model.id)
         </dt>
         <dd class = "col-sm-10">
             @Html.DisplayFor(model => model.content)

@@ -10,6 +10,7 @@ using InspireMe.Models;
 using Microsoft.AspNetCore.Authorization;
 using System.Security.Claims;
 using Azure.Storage.Blobs;
+using AutoMapper;
 
 namespace InspireMe.Controllers
 {
@@ -19,12 +20,14 @@ namespace InspireMe.Controllers
         private readonly AppDbContext _context;
         private readonly IWebHostEnvironment _env;
         private readonly IConfiguration _config;
+        private readonly IMapper _mapper;
 
-        public QuotesController(AppDbContext context, IWebHostEnvironment env, IConfiguration config)
+        public QuotesController(AppDbContext context, IWebHostEnvironment env, IConfiguration config,IMapper mapper)
         {
             _context = context;
             _env = env;
             _config = config;
+            _mapper = mapper;
         }
 
         // GET: Quotes
@@ -50,12 +53,14 @@ namespace InspireMe.Controllers
 
             var quote = await _context.Quotes
                 .FirstOrDefaultAsync(m => m.id == id);
+         QuoteModel model= _mapper.Map<QuoteModel>(quote);
+
             if (quote == null)
             {
                 return NotFound();
             }
 
-            return View(quote);
+            return View(model);
         }
 
         // GET: Quotes/Create
@@ -174,6 +179,7 @@ namespace InspireMe.Controllers
             {
                 return NotFound();
             }
+           
 
             return View(quote);
         }
@@ -186,6 +192,17 @@ namespace InspireMe.Controllers
             var quote = await _context.Quotes.FindAsync(id);
             if (quote != null)
             {
+                if (!string.IsNullOrEmpty(quote.ImageUrl) && quote.ImageUrl.Contains(".blob.core.windows.net"))
+                {
+                    await DeleteBlobAsync(quote.ImageUrl);
+                }
+                else
+                {
+                    // delete local file
+                    var path = Path.Combine(_env.WebRootPath, quote.ImageUrl.TrimStart('/'));
+                    if (System.IO.File.Exists(path))
+                        System.IO.File.Delete(path);
+                }
                 _context.Quotes.Remove(quote);
             }
 
@@ -227,6 +244,29 @@ namespace InspireMe.Controllers
 
             return blob.Uri.ToString(); // Full URL to image
         }
+        private async Task DeleteBlobAsync(string blobUrl)
+        {
+            try
+            {
+                // Extract blob name from URL
+                var uri = new Uri(blobUrl);
+                var blobName = Path.GetFileName(uri.LocalPath); // e.g. "abc123.jpg"
+
+                var containerName = _config["AzureBlob:Container"];
+                var connectionString = _config["AzureBlob:ConnectionString"];
+
+                var blobContainerClient = new BlobContainerClient(connectionString, containerName);
+                var blobClient = blobContainerClient.GetBlobClient(blobName);
+
+                await blobClient.DeleteIfExistsAsync(); // 🔥 Delete from Azure
+            }
+            catch (Exception ex)
+            {
+                // Optional: Log error or notify admin
+                Console.WriteLine("Blob deletion failed: " + ex.Message);
+            }
+        }
+
         private bool QuoteExists(int id)
         {
             return _context.Quotes.Any(e => e.id == id);

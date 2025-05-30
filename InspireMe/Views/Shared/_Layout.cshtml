@@ -18,7 +18,9 @@
                     <span class="navbar-toggler-icon"></span>
                 </button>
                 <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
+                    <div class="flex-column align-items-end">
                     <partial name="_LoginPartial" />
+                    </div>
                     <ul class="navbar-nav flex-grow-1">
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
@@ -48,6 +50,32 @@
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
+    <script>
+        // Show loader on all form submits
+        document.addEventListener('DOMContentLoaded', function () {
+            document.querySelectorAll('form').forEach(form => {
+                form.addEventListener('submit', function () {
+                    document.getElementById('global-loading')?.classList.remove('d-none');
+                });
+            });
+        });
+
+        // Optional: Show loader during all fetch/ajax calls
+        (function () {
+            const originalFetch = window.fetch;
+            window.fetch = async function (...args) {
+                document.getElementById('global-loading')?.classList.remove('d-none');
+                try {
+                    const response = await originalFetch(...args);
+                    return response;
+                } finally {
+                    document.getElementById('global-loading')?.classList.add('d-none');
+                }
+            };
+        })();
+    </script>
+
     @await RenderSectionAsync("Scripts", required: false)
+    @await Html.PartialAsync("_Loading")
 </body>
 </html>
