@@ -50,6 +50,37 @@ namespace InspireMe.Services
             return true;
         }
 
+        public async Task<List<UserRoleViewModel>> GetAllUsersWithRolesAsync(string searchTerm = null)
+        {
+            var usersQuery = _userManager.Users.AsQueryable();
+
+            if (!string.IsNullOrEmpty(searchTerm))
+            {
+                searchTerm = searchTerm.ToLower();
+                usersQuery = usersQuery.Where(u =>
+                    u.Email.ToLower().Contains(searchTerm) ||
+                    u.Name.ToLower().Contains(searchTerm));
+            }
+
+            var users = usersQuery.ToList();
+
+            var userRoles = new List<UserRoleViewModel>();
+
+            foreach (var user in users)
+            {
+                var roles = await _userManager.GetRolesAsync(user);
+                userRoles.Add(new UserRoleViewModel
+                {
+                    UserId = user.Id,
+                    Name = user.Name,
+                    Email = user.Email,
+                    CurrentRole = roles.FirstOrDefault() ?? "None",
+                    AvailableRoles = _roleManager.Roles.Select(r => r.Name).ToList()
+                });
+            }
+
+            return userRoles;
+        }
 
 
     }

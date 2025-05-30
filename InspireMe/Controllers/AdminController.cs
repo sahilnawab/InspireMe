@@ -27,11 +27,11 @@ namespace InspireMe.Controllers
             return View(quote);
         }
 
-        public async Task<IActionResult> Users()
-        {
-            var users = await _adminService.GetAllUsersAsync();
-            return View(users);
-        }
+        //public async Task<IActionResult> Users()
+        //{
+        //    var users = await _adminService.GetAllUsersAsync();
+        //    return View(users);
+        //}
 
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -49,5 +49,13 @@ namespace InspireMe.Controllers
 
             return RedirectToAction("Users");
         }
+
+        public async Task<IActionResult> Users(string searchTerm = null)
+        {
+            var model = await _adminService.GetAllUsersWithRolesAsync(searchTerm);
+            ViewBag.SearchTerm = searchTerm;
+            return View(model);
+        }
+
     }
 }
